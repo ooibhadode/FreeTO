@@ -1,5 +1,5 @@
 # FreeTO
- # FreeTO
+
  **FreeTO** which stands for Freeform Topology Optimization (3D topology optimization through a structured mesh with smooth boundaries)
  is an open-source Matlab code for initializing, optimizing, post-processing free-form 3D topology optimization problems.
 
