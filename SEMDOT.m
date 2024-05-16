@@ -132,7 +132,9 @@ while (change > tolx && tol>tol_thresh) && loop < maxloop
         ylabel('Volume fraction', 'rotation', 270,'Interpreter','Latex'); ax = gca; ax.YColor = 'r'; 
         pause(1e-6); hold off
         %% UPDATE% HEAVISIDE REGULARIZATION PARAMETER
+        if beta < 2
          beta=beta+ER;
+        end
         fprintf('Parameter beta increased to %g.\n',beta);
         vxPhys_full = reshape(vxPhys,nely,nelx,nelz);
         vxPhys = vxPhys(ele);
