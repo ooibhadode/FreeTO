@@ -21,7 +21,7 @@ tol = 1; tol_thresh = 1e-3;
 %% USER-DEFINED GRID POINTS
 ngrid=4; rnmin=1;
 %% INITIALIZE HEAVISIDE REGULARIZATION PARAMETER
-beta=0.5; ER=0.5;
+beta=0.5; ER=0.05;
 %% ELEMENTAL NODES AND COORDINATES
 [nodex,nodey,nodez] = meshgrid(0:nelx,0:nely,0:nelz);
 [fnx,fny,fnz] = meshgrid(0:1/ngrid:nelx,0:1/ngrid:nely,0:1/ngrid:nelz);
@@ -41,19 +41,19 @@ vx = repmat(vol,[nely,nelx,nelz]); vx = vx(:); vx = vx(ele);                % ma
 vxPhys = vx; 
 loop = 0; 
 change = 1;
-%% INITIALIZE MMA OPTIMIZER
-m     = 1;                % The number of general constraints.
-n     =  nnele;  % The number of design variables x_j.                      % make a change here
-xmin  = zeros(n,1);       % Column vector with the lower bounds for the variables x_j.
-xmax  = ones(n,1);        % Column vector with the upper bounds for the variables x_j.
-xold1 = vx(:);             % xval, one iteration ago (provided that iter>1).
-xold2 = vx(:);             % xval, two iterations ago (provided that iter>2).
-low   = ones(n,1);        % Column vector with the lower asymptotes from the previous iteration (provided that iter>1).
-upp   = ones(n,1);        % Column vector with the upper asymptotes from the previous iteration (provided that iter>1).
-a0    = 1;                % The constants a_0 in the term a_0*z.
-a     = zeros(m,1);       % Column vector with the constants a_i in the terms a_i*z.
-c_MMA = 10000*ones(m,1);  % Column vector with the constants c_i in the terms c_i*y_i.
-d     = zeros(m,1);       % Column vector with the constants d_i in the terms 0.5*d_i*(y_i)^2.
+% %% INITIALIZE MMA OPTIMIZER
+% m     = 1;                % The number of general constraints.
+% n     =  nnele;  % The number of design variables x_j.                      % make a change here
+% xmin  = zeros(n,1);       % Column vector with the lower bounds for the variables x_j.
+% xmax  = ones(n,1);        % Column vector with the upper bounds for the variables x_j.
+% xold1 = vx(:);             % xval, one iteration ago (provided that iter>1).
+% xold2 = vx(:);             % xval, two iterations ago (provided that iter>2).
+% low   = ones(n,1);        % Column vector with the lower asymptotes from the previous iteration (provided that iter>1).
+% upp   = ones(n,1);        % Column vector with the upper asymptotes from the previous iteration (provided that iter>1).
+% a0    = 1;                % The constants a_0 in the term a_0*z.
+% a     = zeros(m,1);       % Column vector with the constants a_i in the terms a_i*z.
+% c_MMA = 10000*ones(m,1);  % Column vector with the constants c_i in the terms c_i*y_i.
+% d     = zeros(m,1);       % Column vector with the constants d_i in the terms 0.5*d_i*(y_i)^2.
 %% START ITERATION
 while (change > tolx && tol>tol_thresh) && loop < maxloop 
 %% UPDATE ITERATION
@@ -75,22 +75,32 @@ while (change > tolx && tol>tol_thresh) && loop < maxloop
 %% FILTERING AND MODIFICATION OF SENSITIVITIES
     dc = H*(dc./Hs);                                                        % make a change here  
     dv = H*(dv./Hs);                                                        % make a change here
-    %% METHOD OF MOVING ASYMPTOTES
-    xval  = vx;                                                             % make a change here
-    f0val = c;
-    df0dx = dc;                                                             % make a change here
-    fval  = sum(vxPhys)/(vol*nnele) - 1;                                    % make a change here
-    dfdx  = dv' / (vol*nnele);                                              % make a change here
-    [vxmma, ~, ~, ~, ~, ~, ~, ~, ~, low,upp] = ...
-    mmasub(m, n, loop, xval, xmin, xmax, xold1, xold2, ...
-    f0val,df0dx,fval,dfdx,low,upp,a0,a,c_MMA,d);
-%% Update MMA Variables
-    vxnew     = vxmma;                                                      % make a change here
-    vxPhys = (H*vxnew)./Hs;                                                 % make a change here 
-    xold2    = xold1(:);
-    xold1    = vx(:);
+    %% OPTIMALITY CRITERIA UPDATE
+    l1 = 0; l2 = 1e9; move = 0.1;
+    while (l2-l1)/(l1+l2) > 1e-3
+        lmid = 0.5*(l2+l1);
+        vxnew = max(0,max(vxPhys-move,min(1,min(vxPhys+move,vxPhys.*sqrt(-dc./dv/lmid)))));
+        if sum(vxnew) > vol*nnele, l1 = lmid; else l2 = lmid; end
+    end
+    vxPhys = (H*vxnew)./Hs;
+%     %% METHOD OF MOVING ASYMPTOTES
+%     xval  = vx;                                                             % make a change here
+%     f0val = c;
+%     df0dx = dc;                                                             % make a change here
+%     fval  = sum(vxPhys)/(vol*nnele) - 1;                                    % make a change here
+%     dfdx  = dv' / (vol*nnele);                                              % make a change here
+%     [vxmma, ~, ~, ~, ~, ~, ~, ~, ~, low,upp] = ...
+%     mmasub(m, n, loop, xval, xmin, xmax, xold1, xold2, ...
+%     f0val,df0dx,fval,dfdx,low,upp,a0,a,c_MMA,d);
+% %% Update MMA Variables
+%     vxnew     = vxmma;                                                      % make a change here
+%     vxPhys = (H*vxnew)./Hs;                                                 % make a change here 
+%     xold2    = xold1(:);
+%     xold1    = vx(:);
+    %% Change to total number of elements
     vxPhys1 = zeros(nely,nelx,nelz); vxPhys2 = vxPhys1(:);                  % make a change here 
     vxPhys2(ele) = vxPhys; vxPhys = vxPhys2; vxPhys(MusD) = 1;              % make a change here
+    %% Apply smooth edge algorithm
     [vxPhys,xg,lss,top,tol] = smoothedge3D(vxPhys,Hn,Hns,nelx,nely,nelz,nele,nnele,nodex,nodey,nodez,fnx,fny,fnz,beta,ngrid);
     %% CHECK CONVERGENCE
         change = sum(abs(vxnew(:)-vx(:)))/(vol*nnele);                      % make a change here 
