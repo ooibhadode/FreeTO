@@ -13,15 +13,15 @@ function [nelx,nely,nelz,ngrid,stp1,xg,top,lss,fnx,fny,fnz,del_x,del_y,del_z,S] 
 fixeddof = supportDOFs(sup_all,sup_x,sup_y,sup_z);
 %% USER-DEFINED LOOP PARAMETERS
 maxloop = 500;    % Maximum number of iterations
-tolx = 0.001;      % Terminarion criterion
+tolx = 0.003;      % Terminarion criterion
 %% USER-DEFINED MATERIAL PROPERTIES
 E0 = 1*E00;           % Young's modulus of solid material
 Emin = 0.001;      % Young's modulus of void-like material
-tol = 1; tol_thresh = 1e-3;
+tol = 1; tol_thresh = 3e-3;
 %% USER-DEFINED GRID POINTS
 ngrid=4; rnmin=1;
 %% INITIALIZE HEAVISIDE REGULARIZATION PARAMETER
-beta=0.5; ER=0.05;
+beta=0.1; ER=0.05;
 %% ELEMENTAL NODES AND COORDINATES
 [nodex,nodey,nodez] = meshgrid(0:nelx,0:nely,0:nelz);
 [fnx,fny,fnz] = meshgrid(0:1/ngrid:nelx,0:1/ngrid:nely,0:1/ngrid:nelz);
