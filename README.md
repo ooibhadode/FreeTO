@@ -11,22 +11,22 @@
 ### Table 1: Name-value inputs
 
 --------------------------------------------------------------------------------------------------------------------
- | Name-value                        | Description                                                                                                                                  | Value                              |
- |-----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
- | fixed                             | Mesh file (.stl) of the regions in domain with a Dirichlet displacement boundary condition fixed in all three directions                     | -                                  |
- | xfixed, yfixed, zfixed            | Type of topology optimization approach                                                                                                       | -                                  |
- | force2 – force10                  | Mesh files (.stl) of regions in domain that carry up to 9 additional load cases                                                              | -                                  |
- | keepdom                           | Mesh file (.stl) of regions in domain that should remain unchanged throughout the optimization                                               | -                                  |
- | keep_BC                           | Specify if the load and support (fixed in all directions) regions should be included in the optimized structure                              | Yes                                |
- | keep_BCx, keep_BCy, keep_BCz      | Specify if the support regions fixed in x, y, and z directions, respectively, should be included in the optimized structure                  | No                                 |
+ | Name-value                        | Description                                                                                                                                  | Default value |
+ |-----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+ | fixed                             | Mesh file (.stl) of the regions in domain with a Dirichlet displacement boundary condition fixed in all three directions                     | -             |
+ | xfixed, yfixed, zfixed            | Type of topology optimization approach                                                                                                       | -             |
+ | force2 – force10                  | Mesh files (.stl) of regions in domain that carry up to 9 additional load cases                                                              | -             |
+ | keepdom                           | Mesh file (.stl) of regions in domain that should remain unchanged throughout the optimization                                               | -             |
+ | keep_BC                           | Specify if the load and support (fixed in all directions) regions should be included in the optimized structure                              | Yes           |
+ | keep_BCx, keep_BCy, keep_BCz      | Specify if the support regions fixed in x, y, and z directions, respectively, should be included in the optimized structure                  | No            |
  | YoungsModulus                     | Specify the Young’s Modulus of the material                                                                                                  |
-| PoissonsRatio                     | Specifies the Poisson’s ratio of the material                                                                                                | 0.3                                |
- | optimization                      | Specify the optimization method (SIMP or SEMDOT)                                                                                             | SIMP                               |
- | Fmagx, Fmagy, Fmagz               | Indicates the x, y, and z components of the loads                                                                                            | 0, 0, 0                            |
- | modelName                         | Indicates the name of the mesh file (.stl) generated from the optimized structure                                                            | -                                  |
- | loadtype                          | Indicates if a load should be applied at a point (center node) or distributed across all nodes in a load case                                | distributed                        |
- | Symmetry1, Symmetry2, Symmetry3   | Indicates a symmetry plane to mirror the optimized topology. Symmetry can be indicated a maximum of 3 times.                                 | -                                  |
- | direction1, direction2, direction3 | Indicates whether the mirror should occur to the left or right of the symmetry plane. It can be invoked the same number of times as Symmetry | Right                              |
+| PoissonsRatio                     | Specifies the Poisson’s ratio of the material                                                                                                | 0.3           |
+ | optimization                      | Specify the optimization method (SIMP or SEMDOT)                                                                                             | SIMP          |
+ | Fmagx, Fmagy, Fmagz               | Indicates the x, y, and z components of the loads                                                                                            | 0, 0, 0       |
+ | modelName                         | Indicates the name of the mesh file (.stl) generated from the optimized structure                                                            | -             |
+ | loadtype                          | Indicates if a load should be applied at a point (center node) or distributed across all nodes in a load case                                | distributed   |
+ | Symmetry1, Symmetry2, Symmetry3   | Indicates a symmetry plane to mirror the optimized topology. Symmetry can be indicated a maximum of 3 times.                                 | -             |
+ | direction1, direction2, direction3 | Indicates whether the mirror should occur to the left or right of the symmetry plane. It can be invoked the same number of times as Symmetry | Right         |
 
  ### Table 2: Outputs
  | Variable | Description                                             |                                    
